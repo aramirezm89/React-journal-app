@@ -1,12 +1,17 @@
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { checkingauthentication, startGoogleSignIn } from "../../store/auth";
+import { Link as RouterLink } from "react-router-dom";
 import { Google } from "@mui/icons-material";
 import { Grid, Typography, TextField, Button, Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
 import { AuthLayout } from "../layout/AuthLayout";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
 export const LoginPage = () => {
-
+  const { status } = useSelector((state) => state.auth);
+  const isAuthenticating = useMemo(() => status === 'checking',[status]);
+  const dispatch = useDispatch();
   const validationSchema = yup.object({
     email: yup
       .string()
@@ -14,26 +19,31 @@ export const LoginPage = () => {
       .required("Campo obligatorio"),
     password: yup
       .string()
-      .min(6,"La contraseña debe tener por lo menos 6 caracteres")
-      .max(20,"La contraseña debe tener maximo 20 caracteres")
+      .min(6, "La contraseña debe tener por lo menos 6 caracteres")
+      .max(20, "La contraseña debe tener maximo 20 caracteres")
       .required("Campo Obligatorio"),
   });
 
-  const onSubmit = (values,actions) =>{
-    console.log(values)
-    actions.resetForm()
-  }
+  const onSubmit = (values, actions) => {
+    console.log(values);
+    actions.resetForm();
+    dispatch(checkingauthentication());
+  };
 
+  const onGoogleSignIn = () => {
+    dispatch(startGoogleSignIn());
+  };
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: onSubmit
+    onSubmit: onSubmit,
   });
 
-  const {handleSubmit,handleChange,isSubmitting,values,errors,touched}  = formik
+  const { handleSubmit, handleChange, isSubmitting, values, errors, touched } =
+    formik;
   return (
     <AuthLayout title="Login">
       <form onSubmit={handleSubmit}>
@@ -70,13 +80,23 @@ export const LoginPage = () => {
 
           <Grid container item spacing={1}>
             <Grid item xs={12} sm={6}>
-              <Button type="submit" disabled={isSubmitting} variant="contained" fullWidth>
+              <Button
+                type="submit"
+                disabled={isAuthenticating}
+                variant="contained"
+                fullWidth
+              >
                 Login
               </Button>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Button variant="contained" fullWidth>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={onGoogleSignIn}
+                disabled={isAuthenticating}
+              >
                 <Google /> <Typography sx={{ ml: 1 }}>Google</Typography>
               </Button>
             </Grid>
