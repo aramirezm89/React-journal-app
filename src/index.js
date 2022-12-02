@@ -7,6 +7,7 @@ import { JournalApp } from "./JournalApp";
 import { Provider } from "react-redux";
 import {store} from "./store"
 import "./styles.css";
+ import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

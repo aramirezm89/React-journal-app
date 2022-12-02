@@ -26,6 +26,7 @@ export const AuthLayout = ({children,title=''}) => {
           {children}
         </Grid>
       </Grid>
+     
     </>
   );
 }

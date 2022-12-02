@@ -12,6 +12,7 @@ export const LoginPage = () => {
   const { status } = useSelector((state) => state.auth);
   const isAuthenticating = useMemo(() => status === 'checking',[status]);
   const dispatch = useDispatch();
+  
   const validationSchema = yup.object({
     email: yup
       .string()

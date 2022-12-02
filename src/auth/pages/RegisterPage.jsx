@@ -1,13 +1,24 @@
 import { Google } from "@mui/icons-material";
-import { Grid, Typography, TextField, Button, Link } from "@mui/material";
+import { Grid, Typography, TextField, Button, Link, Alert } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { AuthLayout } from "../layout/AuthLayout";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { startCreatingUserWithEmailPassword } from "../../store/auth";
+import { useMemo } from "react";
+import { handleNotificationError } from "../../helpers/handdleNotifications";
 
 export const RegisterPage = () => {
+
+  const {status,errorMessage} = useSelector(state => state.auth);
+  const isChekingAuthentication = useMemo(() => status==='checking', [status])
+    const dispatch = useDispatch();
+
+
+  //validacion formulario
   const validationSchema = yup.object({
-    name: yup.string().required("Campo Obligaotorio"),
+    displayName: yup.string().required("Campo Obligaotorio"),
     email: yup
       .string()
       .email("Debés ingresar un email valido")
@@ -19,14 +30,20 @@ export const RegisterPage = () => {
       .required("Campo Obligatorio"),
   });
 
+  //submit del formulario
   const onSubmit = (values, actions) => {
-    console.log(values);
+
+    dispatch(startCreatingUserWithEmailPassword(values))
+
+    
     actions.resetForm();
+
   };
 
+  //manejo deo formulario con formik
   const formik = useFormik({
     initialValues: {
-      name: "",
+      displayName: "",
       email: "",
       password: "",
     },
@@ -34,8 +51,9 @@ export const RegisterPage = () => {
     onSubmit: onSubmit,
   });
 
-  const { handleSubmit, handleChange, isSubmitting, values, errors, touched } =
-    formik;
+  //destructuracion de funciones de formik
+  const { handleSubmit, handleChange, isSubmitting, values, errors, touched } = formik;
+
   return (
     <AuthLayout title="Crear cuenta">
       <form onSubmit={handleSubmit}>
@@ -45,14 +63,14 @@ export const RegisterPage = () => {
             <TextField
               label="Nombre completo"
               type="text"
-              id="name"
-              name="name"
+              id="displayName"
+              name="displayName"
               placeholder="Ingresa tu nombre completo"
               fullWidth
-              value={values.name}
+              value={values.displayName}
               onChange={handleChange}
-              error={touched.name && Boolean(errors.name)}
-              helperText={touched.name && errors.name}
+              error={touched.displayName && Boolean(errors.displayName)}
+              helperText={touched.displayName && errors.displayName}
             />
           </Grid>
 
@@ -87,10 +105,13 @@ export const RegisterPage = () => {
           </Grid>
 
           <Grid container item spacing={1}>
+            <Grid item xs={12} display={errorMessage?'':'none'}>
+            <Alert severity="error">{errorMessage}</Alert>
+            </Grid>
             <Grid item xs={12}>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isChekingAuthentication}
                 variant="contained"
                 fullWidth
               >
@@ -101,7 +122,7 @@ export const RegisterPage = () => {
         </Grid>
       </form>
       <Grid container direction="row" justifyContent="end" sx={{ mt: 1 }}>
-        <Typography sx={{mr:1}}>¿Ya tienes cuenta?</Typography>
+        <Typography sx={{ mr: 1 }}>¿Ya tienes cuenta?</Typography>
         <Link color="inherit" component={RouterLink} to="/auth/login">
           Login
         </Link>
