@@ -49,7 +49,10 @@ export const LoginPage = () => {
     formik;
   return (
     <AuthLayout title="Login">
-      <form onSubmit={handleSubmit}>
+      <form
+        className="animate__animated animate__fadeIn animate__faster"
+        onSubmit={handleSubmit}
+      >
         <Grid container spacing={2}>
           {/* correo */}
           <Grid item xs={12}>

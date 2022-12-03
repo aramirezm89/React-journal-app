@@ -1,20 +1,21 @@
-import { Google } from "@mui/icons-material";
-import { Grid, Typography, TextField, Button, Link, Alert } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { AuthLayout } from "../layout/AuthLayout";
+import {
+  Alert, Button, Grid, Link, TextField, Typography
+} from "@mui/material";
 import { useFormik } from "formik";
-import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { startCreatingUserWithEmailPassword } from "../../store/auth";
 import { useMemo } from "react";
-import { handleNotificationError } from "../../helpers/handdleNotifications";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+import * as yup from "yup";
+import { startCreatingUserWithEmailPassword } from "../../store/auth";
+import { AuthLayout } from "../layout/AuthLayout";
 
 export const RegisterPage = () => {
-
-  const {status,errorMessage} = useSelector(state => state.auth);
-  const isChekingAuthentication = useMemo(() => status==='checking', [status])
-    const dispatch = useDispatch();
-
+  const { status, errorMessage } = useSelector((state) => state.auth);
+  const isChekingAuthentication = useMemo(
+    () => status === "checking",
+    [status]
+  );
+  const dispatch = useDispatch();
 
   //validacion formulario
   const validationSchema = yup.object({
@@ -32,12 +33,9 @@ export const RegisterPage = () => {
 
   //submit del formulario
   const onSubmit = (values, actions) => {
+    dispatch(startCreatingUserWithEmailPassword(values));
 
-    dispatch(startCreatingUserWithEmailPassword(values))
-
-    
     actions.resetForm();
-
   };
 
   //manejo deo formulario con formik
@@ -52,11 +50,15 @@ export const RegisterPage = () => {
   });
 
   //destructuracion de funciones de formik
-  const { handleSubmit, handleChange, isSubmitting, values, errors, touched } = formik;
+  const { handleSubmit, handleChange, isSubmitting, values, errors, touched } =
+    formik;
 
   return (
     <AuthLayout title="Crear cuenta">
-      <form onSubmit={handleSubmit}>
+      <form
+        className="animate__animated animate__fadeIn animate__faster"
+        onSubmit={handleSubmit}
+      >
         <Grid container spacing={2}>
           {/* Nombre completo */}
           <Grid item xs={12}>
@@ -105,8 +107,8 @@ export const RegisterPage = () => {
           </Grid>
 
           <Grid container item spacing={1}>
-            <Grid item xs={12} display={errorMessage?'':'none'}>
-            <Alert severity="error">{errorMessage}</Alert>
+            <Grid item xs={12} display={errorMessage ? "" : "none"}>
+              <Alert severity="error">{errorMessage}</Alert>
             </Grid>
             <Grid item xs={12}>
               <Button
