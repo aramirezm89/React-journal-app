@@ -8,7 +8,7 @@ import { NoteView } from "../views/NoteView";
 import { NothingSelectedView } from "../views/NothingSelectedView";
 export const JournalPage = () => {
 
-  const { isSaving,active} = useSelector((state) => state.journal);
+  const { isSaving,activeNote} = useSelector((state) => state.journal);
   const dispatch = useDispatch();
 
   const onNewNote = () =>{
@@ -17,7 +17,7 @@ export const JournalPage = () => {
   return (
     <>
       <JournalLayout>
-        {(!!active )
+        {(!!activeNote )
         ? <NoteView /> 
         : <NothingSelectedView />
         }
