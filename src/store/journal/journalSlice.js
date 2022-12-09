@@ -27,27 +27,43 @@ export const journalSlice = createSlice({
     },
     setActiveNote: (state, { payload }) => {
       state.activeNote = payload;
+      state.saveMessage = "";
     },
     setNotes: (state, { payload }) => {
       state.notes = payload;
     },
     setSaving: (state, action) => {
       state.isSaving = true;
+      state.saveMessage = "";
 
       /*TODO: Mensaje de Error */
     },
-    updateNote: (state, {payload}) => {
-      state.isSaving = false;
-
-      state.notes = state.notes.map((note) =>{
-        
-        if(note.id === payload.id){
-          return payload
+    updateNote: (state, { payload }) => {
+      state.notes = state.notes.map((note) => {
+        if (note.id === payload.id) {
+          return payload;
         }
         return note;
-      })
+      });
+
+      state.isSaving = false;
+      state.saveMessage = `${payload.title}, actualizada correctamente`;
     },
-    deleteNoteById: () => {},
+    setPhotosToActiveNote: (state, { payload }) => {
+      state.activeNote.imageUrls = [...state.activeNote.imageUrls, ...payload];
+      state.isSaving = false;
+    },
+
+    clearNotesLogout: (state) => {
+      state.isSaving = false;
+      state.saveMessage = "";
+      state.notes = [];
+      state.activeNote = null;
+    },
+    deleteNoteById: (state,{payload}) => {
+      state.activeNote = null;
+      state.notes = state.notes.filter(note => note.id !== payload)
+    },
   },
 });
 
@@ -58,5 +74,7 @@ export const {
   setNotes,
   setSaving,
   updateNote,
+  setPhotosToActiveNote,
+  clearNotesLogout,
   deleteNoteById,
 } = journalSlice.actions;

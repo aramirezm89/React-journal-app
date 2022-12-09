@@ -1,15 +1,18 @@
-import { SaveOutlined } from "@mui/icons-material";
+import { DeleteOutline, SaveOutlined } from "@mui/icons-material";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import moment from "moment";
 import "moment/locale/es";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
-import { setActiveNote, startSaveNote } from "../../store/journal";
+import { alertSuccess } from "../../helpers/handleAlert";
+import { setActiveNote, startDeletingNote, startSaveNote } from "../../store/journal";
 import { ImageGallery } from "../components";
 
 export const NoteView = () => {
 
+    const { activeNote, saveMessage,isSaving } = useSelector((state) => state.journal);
   const dispatch = useDispatch();
   const validationSchema = yup.object({
     title:yup.string().required('Campo requerido'),
@@ -22,7 +25,17 @@ export const NoteView = () => {
 
   }
 
-  const {activeNote} = useSelector(state => state.journal);
+  const onDelete = () =>{
+    dispatch(startDeletingNote());
+  }
+
+  //Efecto encargado de la alerta (SweetAlert2) de nota actualzada
+  useEffect(() =>{
+    if(saveMessage !== ''){
+      alertSuccess(saveMessage)
+    }
+  },[saveMessage])
+
 
 
   const formik =  useFormik({
@@ -42,7 +55,7 @@ export const NoteView = () => {
       direction="row"
       justifyContent="space-between"
       alignItems="center"
-      sx={{ mb: 1, padding: 3 }}
+      sx={{ mb: 1, padding: 3}}
     >
    
 
@@ -62,6 +75,7 @@ export const NoteView = () => {
           {/* button */}
           <Grid item>
             <Button
+              disabled={isSaving}
               type="submit"
               color="primary"
               variant="outlined"
@@ -84,7 +98,7 @@ export const NoteView = () => {
             name="title"
             value={values.title}
             onChange={handleChange}
-            error={touched.title && Boolean(errors.email)}
+            error={touched.title && Boolean(errors.title)}
             helperText={touched.title && errors.title}
           />
 
@@ -104,6 +118,16 @@ export const NoteView = () => {
         </Grid>
       </form>
 
+    <Grid container justifyContent="end">
+    <Button
+    onClick={onDelete} 
+    sx={{mt:2}}
+    color="error"
+    >
+     <DeleteOutline/> Eliminar nota
+    </Button>
+    </Grid>
+      
       {/*  image gallery */}
       <ImageGallery />
     </Grid>

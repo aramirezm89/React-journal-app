@@ -1,70 +1,67 @@
-import { ImageList, ImageListItem } from "@mui/material";
-
+import { UploadOutlined } from "@mui/icons-material";
+import { Grid, IconButton, ImageList, ImageListItem } from "@mui/material";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { startUploadingFiles } from "../../store/journal/thunk";
 
 export const ImageGallery = () => {
+  const { isSaving, activeNote } = useSelector((state) => state.journal);
+  const dispatch = useDispatch();
+
+  const fileInputRef = useRef();
+  const [imagePreview, setImagePreview] = useState(null);
+
+
+
+  const onInputChangeFile = ({ target }) => {
+
+   
+    if (target.files.length === 0) return;
+  
+
+    
+    //TODO dispatch de los archivos seleccionados
+     dispatch(startUploadingFiles(target.files))
+ 
+  };
   return (
-    <ImageList sx={{ width: '100%', height: 500 }} cols={5} rowHeight="auto" >
-      {itemData.map((item) => (
-        <ImageListItem key={item.img} >
-          <img
-            src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-            srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-            alt={item.title}
-            loading="lazy"
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
+    <>
+      <input
+        multiple
+        type="file"
+        onChange={onInputChangeFile}
+        style={{ display: "none" }}
+        ref={fileInputRef}
+      />
+
+      <Grid container direction="row">
+        <Grid item>
+          <IconButton
+            color="primary"
+            disabled={isSaving}
+            onClick={() => {
+              fileInputRef.current.click();
+            }}
+          >
+            <UploadOutlined />
+          </IconButton>
+          <span>Subir imagenes: </span>
+        </Grid>
+      </Grid>
+      <ImageList sx={{ width: "100%", height: '100%' }} cols={3} rowHeight="auto">
+        {activeNote.imageUrls?.map((image) => (
+          <ImageListItem key={image} >
+            <img
+              
+              src={`${image}?w=164&h=164&fit=crop&auto=format`}
+              srcSet={`${image}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+              alt={"imagen"}
+              loading="lazy"
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </>
   );
 };
 
-const itemData = [
-  {
-    img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-    title: "Breakfast",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
-    title: "Burger",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1522770179533-24471fcdba45",
-    title: "Camera",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c",
-    title: "Coffee",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1533827432537-70133748f5c8",
-    title: "Hats",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62",
-    title: "Honey",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6",
-    title: "Basketball",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
-    title: "Fern",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
-    title: "Mushrooms",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
-    title: "Tomato basil",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
-    title: "Sea star",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
-    title: "Bike",
-  },
-];
