@@ -9,7 +9,7 @@ export const ImageGallery = () => {
   const dispatch = useDispatch();
 
   const fileInputRef = useRef();
-  const [imagePreview, setImagePreview] = useState(null);
+
 
 
 

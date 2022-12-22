@@ -2,6 +2,7 @@
 import { collection, deleteDoc, doc, setDoc } from "firebase/firestore/lite";
 import { FirebaseDB } from "../../firebase/config";
 import { fileUplaod, loadNotesFireStore } from "../../helpers";
+
 import {
   addEmptyNotes,
   deleteNoteById,
@@ -23,6 +24,7 @@ export const startNewNote = () => {
     const newNote = {
       title: "",
       body: "",
+      imageUrls:[],
       date: new Date().getTime(),
     };
 
@@ -104,9 +106,10 @@ export const startDeletingNote = () => {
 
     const response = await deleteDoc(docRef);
 
-     activeNote.imageUrls.forEach(url =>{
-      
-     });
+    
+
+
+
     dispatch(deleteNoteById(activeNote.id))
   };
 };
